@@ -63,9 +63,7 @@
           display: flex;
           align-items: center;
           flex-direction: column;
-          &:first-child {
-            margin-bottom: 48px;
-          }
+          margin-bottom: 48px;
           img {
             max-width: 150px;
             height: auto;
