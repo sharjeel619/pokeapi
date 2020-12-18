@@ -1,0 +1,102 @@
+@import '../../assets/scss/variables.scss';
+.home-page {
+  .banner {
+    display: flex;
+    justify-content: center;
+    background-color: $yellow;
+    img {
+      margin: 24px 12px;
+      object-fit: cover;
+      max-width: 100%;
+      height: auto;
+    }
+  }
+  .pokemon-list-container {
+    margin: 0 auto;
+    overflow: hidden;
+    max-width: 1440px;
+    h1 {
+      text-align: center;
+      margin: 32px 12px;
+    }
+    .pokemon-list {
+      display: grid;
+      grid-gap: 1rem;
+      grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+    }
+  }
+  .pokemon-chain-list {
+    max-width: 1024px;
+    margin: 0 auto;
+    padding: 24px;
+    .back-to-list {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .back {
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        i {
+          font-size: 24px;
+          transition: .2s all ease-in-out;
+        }
+        .text {
+          margin: 0 0 0 12px;
+        }
+      }
+      .selected {
+        font-size: 22px;
+      }
+      span {
+        visibility: hidden;
+      }
+    }
+    .chain-list {
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      .single-pokemon-container {
+        .single-pokemon {
+          text-align: center;
+          display: flex;
+          align-items: center;
+          flex-direction: column;
+          &:first-child {
+            margin-bottom: 48px;
+          }
+          img {
+            max-width: 150px;
+            height: auto;
+          }
+          .name {
+            font-size: 17px;
+            text-transform: capitalize;
+            margin: 8px 0 0 0;
+          }
+        }
+      }
+      .icon-right {
+        font-size: 50px;
+      }
+    }
+    .level-list {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      margin: 32px 0;
+      .level-text {
+        font-size: 22px;
+      }
+    }
+  }
+  .loader {
+    display: flex;
+    justify-content: center;
+    padding: 24px 0;
+    img {
+      max-width: 100px;
+    }
+  }
+}

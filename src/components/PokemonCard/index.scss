@@ -1,0 +1,49 @@
+@import '../../assets/scss/variables.scss';
+.pokemon-card {
+  border: 8px solid $yellow;
+  border-radius: 4px;
+  max-width: 350px;
+  box-shadow: 0 3px 15px rgba(100, 100, 100, 0.3);
+  margin: 0 auto 32px auto;
+  &:hover {
+    box-shadow: 0 4px 15px rgba(100, 100, 100, 0.6);
+    transition: .3s all ease-in-out;
+  }
+  .image-container {
+    max-width: 350px;
+    cursor: pointer;
+    background: #eaeaea;
+    border-bottom: 2px dashed $yellow;
+    img {
+      width: 250px;
+      min-height: 250px;
+      object-fit: cover;
+    }
+  }
+  .description-container {
+    .name {
+      font-size: 22px;
+      text-transform: capitalize;
+      text-align: center;
+      margin-bottom: 12px;
+      cursor: pointer;
+    }
+    .stats {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      .stat-item {
+        text-align: center;
+        .heading {
+          font-size: 14px;
+          text-transform: capitalize;
+          margin: 8px 0;
+        }
+        .value {
+          font-size: 20px;
+          margin: 8px 0;
+        }
+      }
+    }
+  }
+}
