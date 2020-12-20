@@ -139,7 +139,7 @@ export default class Home extends Component {
         pokemonInfo: [...this.evolutionData],
         showLoader: false
       })
-    }, 100)
+    }, 500)
   }
 
   showListFunc = () => {
