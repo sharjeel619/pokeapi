@@ -48,8 +48,8 @@ export default class Home extends Component {
 
   observerCallBack = (elements) => {
     const {isIntersecting} = elements[0]
-    const {pokemonList, showList} = this.state
-    if (!showList || !isIntersecting || !pokemonList.length || this.apiOffset >= this.totalPokemonCount) return
+    const {pokemonList, showList, showLoader} = this.state
+    if (!showList || showLoader || !isIntersecting || !pokemonList.length || this.apiOffset >= this.totalPokemonCount) return
     this.setState({
       showLoader: true
     })
@@ -100,7 +100,8 @@ export default class Home extends Component {
 
   onPokemonCardClick = async (e, data) => {
     this.setState({
-      showList: false
+      showList: false,
+      showLoader: true
     })
     let speciesData = await PokemonAPI.getPokemonSpeciesByUrl(data.species.url)
     let evolutionChainData = await PokemonAPI.getPokemonEvolutionChainByUrl(speciesData.evolution_chain.url)
@@ -112,7 +113,7 @@ export default class Home extends Component {
     let findData = this.state.pokemonList.find(item => item.id === pokemonId)
     this.evolutionData.push({pokemonData: [{missingInfoPokeId: !findData ? pokemonId : 0, ...findData}], missingInfoPokeId: !findData ? pokemonId : 0, level: this.evolutionLevel})
     this.calculatePokemonChain(chain.evolves_to)
-    console.log(evolutionChainData)
+    // console.log(evolutionChainData)
     for (let i = 0; i < this.evolutionData.length; i++) {
       if (!this.evolutionData[i].missingInfoPokeId) continue
       await new Promise((resolve) => {
@@ -123,7 +124,7 @@ export default class Home extends Component {
           }
           let fData = await PokemonAPI.getPokemonInfoById(item1.missingInfoPokeId)
           fData.main_img = fData.sprites.other['official-artwork'].front_default || fData.sprites.other.dream_world.front_default
-          console.log(fData)
+          // console.log(fData)
           arr1[index1] = fData
           resolve()
         })
@@ -146,7 +147,7 @@ export default class Home extends Component {
 
   render() {
     const {pokemonList, pokemonInfo, showList, showLoader} = this.state
-
+    const loaderStyle = {display: showLoader ? 'block' : 'none'}
     const pokemonCards = pokemonList.map((item, index) => (
       <Suspense key={item.id} fallback={<div></div>}>
         <PokemonCard pokeData={item} onCardClick={(e) => this.onPokemonCardClick(e, item)} />
@@ -186,7 +187,7 @@ export default class Home extends Component {
           <img src={Logo} lazy="true" alt="Banner Img"/>
         </div>
 
-        { showList && <div className="pokemon-list-container">
+        { <div className="pokemon-list-container" style={{display: showList ? 'block' : 'none'}}>
             <h1> Choose a Pokemon to see its Evolution Chain </h1>
             <div className="pokemon-list">
               {pokemonCards}
@@ -194,7 +195,7 @@ export default class Home extends Component {
           </div>
         }
 
-        { !showList && <div className="pokemon-chain-list">
+        { <div className="pokemon-chain-list" style={{display: !showList && !showLoader ? 'block' : 'none'}}>
             <div className="back-to-list">
               <div className="back" onClick={this.showListFunc}>
                 <i>&#8592;</i>
@@ -209,7 +210,7 @@ export default class Home extends Component {
         }
 
         <div className="loader" ref={e => this.loaderRef = e}>
-          { showLoader && <img src={Loader} alt="Loader" /> }
+          { <img src={Loader} alt="Loader" style={loaderStyle} /> }
         </div>
       </div>
     )
