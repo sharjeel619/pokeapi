@@ -4,7 +4,7 @@ import React, {
   lazy
 } from 'react';
 import './index.scss';
-import Logo from '../../assets/images/logo.png';
+import Logo from '../../assets/images/logo1.png';
 import Loader from '../../assets/images/loader.svg';
 import PokemonAPI from '../../services/api';
 const PokemonCard = lazy(() => import("../../components/PokemonCard"));
@@ -15,6 +15,7 @@ export default class Home extends Component {
     this.state = {
       pokemonList: [],
       pokemonInfo: [],
+      eveolutionData: [],
       showList: true,
       showLoader: true
     }
@@ -23,7 +24,7 @@ export default class Home extends Component {
     this.evolutionLevel = 1
     this.selectedPokemon = ''
     this.apiOffset = 0
-    this.apiLimit = 50
+    this.apiLimit = 150
     this.observer = null
     this.loaderRef = null
     this.observerOptions = {
@@ -88,6 +89,11 @@ export default class Home extends Component {
       let findData = this.state.pokemonList.find(item => item.id === pokemonId)
       tempList.push({missingInfoPokeId: !findData ? pokemonId : 0, ...findData})
       if (index === chainData.length - 1) {
+        // this.setState(state => ({
+        //   pokemonData: [state.pokemonData, ...tempList],
+        //   level: this.evolutionLevel,
+        //   missingInfoPokeId: !findData ? pokemonId : 0
+        // }))
         this.evolutionData.push({pokemonData: [...tempList], level: this.evolutionLevel,  missingInfoPokeId: !findData ? pokemonId : 0})
         return this.calculatePokemonChain(item.evolves_to)
       }
@@ -113,27 +119,24 @@ export default class Home extends Component {
     let findData = this.state.pokemonList.find(item => item.id === pokemonId)
     this.evolutionData.push({pokemonData: [{missingInfoPokeId: !findData ? pokemonId : 0, ...findData}], missingInfoPokeId: !findData ? pokemonId : 0, level: this.evolutionLevel})
     this.calculatePokemonChain(chain.evolves_to)
-    // console.log(evolutionChainData)
+    console.log(this.evolutionData)
     for (let i = 0; i < this.evolutionData.length; i++) {
-      if (!this.evolutionData[i].missingInfoPokeId) continue
+      if (this.evolutionData[i].missingInfoPokeId === 0) continue
       await new Promise((resolve) => {
         let item = this.evolutionData[i]
         item.pokemonData.forEach(async (item1, index1, arr1) => {
-          if (!item1.missingInfoPokeId) {
-            return
-          }
+          if (item1.missingInfoPokeId === 0) return
           let fData = await PokemonAPI.getPokemonInfoById(item1.missingInfoPokeId)
           fData.main_img = fData.sprites.other['official-artwork'].front_default || fData.sprites.other.dream_world.front_default
-          // console.log(fData)
-          arr1[index1] = fData
+          arr1[index1] = {...item1, ...fData}
           resolve()
         })
       })
     }
-
+    // console.log('Loop finsihed')
     this.setState({
-      showLoader: false,
-      pokemonInfo: this.evolutionData
+      pokemonInfo: [...this.evolutionData],
+      showLoader: false
     })
   }
 
@@ -169,8 +172,8 @@ export default class Home extends Component {
           pokemonInfo.map((item, index) => (
             <div className="single-pokemon-container" key={`pokemon-level-${item.level}-${index}`}>
               {
-                item.pokemonData.map((item1) => ((
-                  <div className="single-pokemon" key={item1.name}>
+                item.pokemonData.map((item1, index1) => ((
+                  <div className="single-pokemon" key={`pokemon-${item.name}-${index1}`}>
                     <img src={item1.main_img} alt={item1.name} />
                     <p className="name">{item1.name}</p>
                   </div>
