@@ -20,6 +20,7 @@ export default class Home extends Component {
       showLoader: true
     }
     this.totalPokemonCount = 0
+    this.pokeListKey = 0
     this.evolutionData = []
     this.evolutionLevel = 1
     this.selectedPokemon = ''
@@ -133,11 +134,12 @@ export default class Home extends Component {
         })
       })
     }
-    // console.log('Loop finsihed')
-    this.setState({
-      pokemonInfo: [...this.evolutionData],
-      showLoader: false
-    })
+    setTimeout(() => {
+      this.setState({
+        pokemonInfo: [...this.evolutionData],
+        showLoader: false
+      })
+    }, 100)
   }
 
   showListFunc = () => {
