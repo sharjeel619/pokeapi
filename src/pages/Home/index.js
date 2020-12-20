@@ -25,7 +25,7 @@ export default class Home extends Component {
     this.evolutionLevel = 1
     this.selectedPokemon = ''
     this.apiOffset = 0
-    this.apiLimit = 150
+    this.apiLimit = 50
     this.observer = null
     this.loaderRef = null
     this.observerOptions = {
