@@ -15,7 +15,6 @@ export default class Home extends Component {
     this.state = {
       pokemonList: [],
       pokemonInfo: [],
-      eveolutionData: [],
       showList: true,
       showLoader: true
     }
@@ -25,7 +24,7 @@ export default class Home extends Component {
     this.evolutionLevel = 1
     this.selectedPokemon = ''
     this.apiOffset = 0
-    this.apiLimit = 50
+    this.apiLimit = 150
     this.observer = null
     this.loaderRef = null
     this.observerOptions = {
@@ -90,11 +89,6 @@ export default class Home extends Component {
       let findData = this.state.pokemonList.find(item => item.id === pokemonId)
       tempList.push({missingInfoPokeId: !findData ? pokemonId : 0, ...findData})
       if (index === chainData.length - 1) {
-        // this.setState(state => ({
-        //   pokemonData: [state.pokemonData, ...tempList],
-        //   level: this.evolutionLevel,
-        //   missingInfoPokeId: !findData ? pokemonId : 0
-        // }))
         this.evolutionData.push({pokemonData: [...tempList], level: this.evolutionLevel,  missingInfoPokeId: !findData ? pokemonId : 0})
         return this.calculatePokemonChain(item.evolves_to)
       }
@@ -127,6 +121,7 @@ export default class Home extends Component {
         let item = this.evolutionData[i]
         item.pokemonData.forEach(async (item1, index1, arr1) => {
           if (item1.missingInfoPokeId === 0) return
+          console.log(`Calling API count: ${index1}`)
           let fData = await PokemonAPI.getPokemonInfoById(item1.missingInfoPokeId)
           fData.main_img = fData.sprites.other['official-artwork'].front_default || fData.sprites.other.dream_world.front_default
           arr1[index1] = {...item1, ...fData}
@@ -134,12 +129,17 @@ export default class Home extends Component {
         })
       })
     }
-    setTimeout(() => {
-      this.setState({
-        pokemonInfo: [...this.evolutionData],
-        showLoader: false
-      })
-    }, 500)
+    console.log(`Done`)
+    this.setState({
+      pokemonInfo: [...this.evolutionData],
+      showLoader: false
+    })
+    // setTimeout(() => {
+    //   this.setState({
+    //     pokemonInfo: [...this.evolutionData],
+    //     showLoader: false
+    //   })
+    // }, 500)
   }
 
   showListFunc = () => {
