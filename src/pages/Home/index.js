@@ -8,7 +8,7 @@ import Logo from '../../assets/images/logo1.png';
 import Loader from '../../assets/images/loader.svg';
 import PokemonAPI from '../../services/api';
 const PokemonCard = lazy(() => import("../../components/PokemonCard"));
-
+const EvolutionInfo = lazy(() => import("../../components/EvolutionInfo"));
 export default class Home extends Component {
   constructor() {
     super()
@@ -16,13 +16,12 @@ export default class Home extends Component {
       pokemonList: [],
       pokemonInfo: [],
       showList: true,
-      showLoader: true
+      showLoader: true,
+      selectedPokemon: null
     }
-    this.totalPokemonCount = 0
-    this.pokeListKey = 0
     this.evolutionData = []
     this.evolutionLevel = 1
-    this.selectedPokemon = ''
+    this.totalPokemonCount = 0
     this.apiOffset = 0
     this.apiLimit = 150
     this.observer = null
@@ -77,145 +76,115 @@ export default class Home extends Component {
     }))
   }
 
-  calculatePokemonChain = async (chainData) => {
-    // Could just only iterate up to 3 levels
-    if (!chainData.length) return
-    this.evolutionLevel++
-    var tempList = []
-    chainData.forEach(async (item, index) => {
-      let {species} = item
-      let pokemonId = species.url.split("pokemon-species")[1].replace(/\//g, '')
-      pokemonId = Number(pokemonId)
-      let findData = this.state.pokemonList.find(item => item.id === pokemonId)
-      tempList.push({missingInfoPokeId: !findData ? pokemonId : 0, ...findData})
-      if (index === chainData.length - 1) {
-        this.evolutionData.push({pokemonData: [...tempList], level: this.evolutionLevel,  missingInfoPokeId: !findData ? pokemonId : 0})
-        return this.calculatePokemonChain(item.evolves_to)
-      }
-    })
-  }
+  // calculatePokemonChain = async (chainData) => {
+  //   // Could just only iterate up to 3 levels
+  //   if (!chainData.length) return
+  //   this.evolutionLevel++
+  //   var tempList = []
+  //   chainData.forEach(async (item, index) => {
+  //     let {species} = item
+  //     let pokemonId = species.url.split("pokemon-species")[1].replace(/\//g, '')
+  //     pokemonId = Number(pokemonId)
+  //     let findData = this.state.pokemonList.find(item => item.id === pokemonId)
+  //     tempList.push({missingInfoPokeId: !findData ? pokemonId : 0, ...findData})
+  //     if (index === chainData.length - 1) {
+  //       this.evolutionData.push({pokemonData: [...tempList], level: this.evolutionLevel,  missingInfoPokeId: !findData ? pokemonId : 0})
+  //       return this.calculatePokemonChain(item.evolves_to)
+  //     }
+  //   })
+  // }
 
-  capitalizeWord = (word) => {
-    return word.charAt(0).toUpperCase() + word.slice(1)
+  // capitalizeWord = (word) => {
+  //   return word.charAt(0).toUpperCase() + word.slice(1)
+  // }
+
+  // onPokemonCardClick = async (e, data) => {
+  //   this.setState({
+  //     showList: false,
+  //     showLoader: true
+  //   })
+  //   let speciesData = await PokemonAPI.getPokemonSpeciesByUrl(data.species.url)
+  //   let evolutionChainData = await PokemonAPI.getPokemonEvolutionChainByUrl(speciesData.evolution_chain.url)
+  //   this.selectedPokemon = `Evolution Chain for ${this.capitalizeWord(data.name)}`
+  //   const {chain} = evolutionChainData
+  //   let pokemonId = chain.species.url.split("pokemon-species")[1].replace(/\//g, '')
+  //   pokemonId = Number(pokemonId)
+  //   // wobbuffet exception, use loop to find pokemon data through api call that are not in the list.
+  //   let findData = this.state.pokemonList.find(item => item.id === pokemonId)
+  //   this.evolutionData.push({pokemonData: [{missingInfoPokeId: !findData ? pokemonId : 0, ...findData}], missingInfoPokeId: !findData ? pokemonId : 0, level: this.evolutionLevel})
+  //   this.calculatePokemonChain(chain.evolves_to)
+  //   console.log(this.evolutionData)
+  //   for (let i = 0; i < this.evolutionData.length; i++) {
+  //     if (this.evolutionData[i].missingInfoPokeId === 0) continue
+  //     await new Promise((resolve) => {
+  //       let item = this.evolutionData[i]
+  //       item.pokemonData.forEach(async (item1, index1, arr1) => {
+  //         if (item1.missingInfoPokeId === 0) return
+  //         console.log(`Calling API count: ${index1}`)
+  //         let fData = await PokemonAPI.getPokemonInfoById(item1.missingInfoPokeId)
+  //         fData.main_img = fData.sprites.other['official-artwork'].front_default || fData.sprites.other.dream_world.front_default
+  //         arr1[index1] = {...item1, ...fData}
+  //         resolve()
+  //       })
+  //     })
+  //   }
+  //   console.log(`Done`)
+  //   this.setState({
+  //     pokemonInfo: [...this.evolutionData],
+  //     showLoader: false
+  //   })
+  // }
+
+  // showListFunc = () => {
+  //   this.evolutionData = []
+  //   this.evolutionLevel = 1
+  //   this.setState({
+  //     showList: true
+  //   })
+  // }
+
+  hideEvolutionInfo = () => {
+    this.setState({
+      showList: true,
+      showLoader: false
+    })
   }
 
   onPokemonCardClick = async (e, data) => {
     this.setState({
-      showList: false,
-      showLoader: true
-    })
-    let speciesData = await PokemonAPI.getPokemonSpeciesByUrl(data.species.url)
-    let evolutionChainData = await PokemonAPI.getPokemonEvolutionChainByUrl(speciesData.evolution_chain.url)
-    this.selectedPokemon = `Evolution Chain for ${this.capitalizeWord(data.name)}`
-    const {chain} = evolutionChainData
-    let pokemonId = chain.species.url.split("pokemon-species")[1].replace(/\//g, '')
-    pokemonId = Number(pokemonId)
-    // wobbuffet exception, use loop to find pokemon data through api call that are not in the list.
-    let findData = this.state.pokemonList.find(item => item.id === pokemonId)
-    this.evolutionData.push({pokemonData: [{missingInfoPokeId: !findData ? pokemonId : 0, ...findData}], missingInfoPokeId: !findData ? pokemonId : 0, level: this.evolutionLevel})
-    this.calculatePokemonChain(chain.evolves_to)
-    console.log(this.evolutionData)
-    for (let i = 0; i < this.evolutionData.length; i++) {
-      if (this.evolutionData[i].missingInfoPokeId === 0) continue
-      await new Promise((resolve) => {
-        let item = this.evolutionData[i]
-        item.pokemonData.forEach(async (item1, index1, arr1) => {
-          if (item1.missingInfoPokeId === 0) return
-          console.log(`Calling API count: ${index1}`)
-          let fData = await PokemonAPI.getPokemonInfoById(item1.missingInfoPokeId)
-          fData.main_img = fData.sprites.other['official-artwork'].front_default || fData.sprites.other.dream_world.front_default
-          arr1[index1] = {...item1, ...fData}
-          resolve()
-        })
-      })
-    }
-    console.log(`Done`)
-    this.setState({
-      pokemonInfo: [...this.evolutionData],
-      showLoader: false
-    })
-    // setTimeout(() => {
-    //   this.setState({
-    //     pokemonInfo: [...this.evolutionData],
-    //     showLoader: false
-    //   })
-    // }, 500)
-  }
-
-  showListFunc = () => {
-    this.evolutionData = []
-    this.evolutionLevel = 1
-    this.setState({
-      showList: true
+      selectedPokemon: data,
+      showLoader: true,
+      showList: false
     })
   }
 
   render() {
-    const {pokemonList, pokemonInfo, showList, showLoader} = this.state
-    const loaderStyle = {display: showLoader ? 'block' : 'none'}
-    const pokemonCards = pokemonList.map((item, index) => (
-      <Suspense key={item.id} fallback={<div></div>}>
-        <PokemonCard pokeData={item} onCardClick={(e) => this.onPokemonCardClick(e, item)} />
-      </Suspense>
-    ))
-    
-    const levelHeading = (
-      <div className="level-list">
-        {
-          pokemonInfo.map((item, index) => (
-            <p className="level-text" key={`level-${index}`}>{ `Level ${index + 1}` }</p>
-          ))
-        }
-      </div>
-    )
-    const evolutionChain = (
-      <div className="chain-list">
-        {
-          pokemonInfo.map((item, index) => (
-            <div className="single-pokemon-container" key={`pokemon-level-${item.level}-${index}`}>
-              {
-                item.pokemonData.map((item1, index1) => ((
-                  <div className="single-pokemon" key={`pokemon-${item.name}-${index1}`}>
-                    <img src={item1.main_img} alt={item1.name} />
-                    <p className="name">{item1.name}</p>
-                  </div>
-                )))
-              }
-            </div>
-          ))
-        }
-      </div>
-    )
+    const {pokemonList, showList, showLoader, pokemonInfo, selectedPokemon} = this.state
     return (
       <div className="home-page">
         <div className="banner">
           <img src={Logo} lazy="true" alt="Banner Img"/>
         </div>
-
-        { <div className="pokemon-list-container" style={{display: showList ? 'block' : 'none'}}>
-            <h1> Choose a Pokemon to see its Evolution Chain </h1>
-            <div className="pokemon-list">
-              {pokemonCards}
-            </div>
+        <div className="pokemon-list-container" style={{display: showList ? 'block' : 'none'}}>
+          <h1> Choose a Pokemon to see its Evolution Chain </h1>
+          <div className="pokemon-list">
+            { 
+              pokemonList.map((item, index) => (
+                <Suspense key={item.id} fallback={<div></div>}>
+                  <PokemonCard pokeData={item} onCardClick={(e) => this.onPokemonCardClick(e, item)} />
+                </Suspense>
+              ))
+            }
           </div>
-        }
-
-        { <div className="pokemon-chain-list" style={{display: !showList && !showLoader ? 'block' : 'none'}}>
-            <div className="back-to-list">
-              <div className="back" onClick={this.showListFunc}>
-                <i>&#8592;</i>
-                <h2 className="text">Back</h2>
-              </div>
-              <h2 className="selected">{this.selectedPokemon}</h2>
-              <span>&nbsp;</span>
-            </div>
-            {levelHeading}
-            {evolutionChain}
-          </div>
-        }
-
+        </div>
+        <div>
+          { !showList && <Suspense fallback={<div></div>}>
+              <EvolutionInfo pokemonList={pokemonList} evolutionData={selectedPokemon} hideEvolutionInfo={this.hideEvolutionInfo} />
+            </Suspense>
+          }
+        </div>
         <div className="loader" ref={e => this.loaderRef = e}>
-          { <img src={Loader} alt="Loader" style={loaderStyle} /> }
+          <img src={Loader} alt="Loader" style={{display: showLoader ? 'block' : 'none'}} />
         </div>
       </div>
     )
