@@ -14,7 +14,7 @@ import React, {
         ground: '#f4e7da',
         rock: '#d5d5d4',
         fairy: '#fceaff',
-        poison: '#98d7a5',
+        poison: '#edb6fc',
         bug: '#f8d5a3',
         dragon: '#97b3e6',
         psychic: '#eaeda1',
