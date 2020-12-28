@@ -7,7 +7,8 @@ import React, {
     constructor(props) {
       super(props)
       this.state = {
-        pokemonInfo: []
+        pokemonInfo: [],
+        doneParsing: false
       }
       this.selectedPokemon = ''
       this.evolutionData = []
@@ -67,25 +68,30 @@ import React, {
           })
         })
       }
-      setTimeout(() => {
+      await new Promise(resolve => setTimeout(() => {
         this.setState({
-          pokemonInfo: this.evolutionData
+          pokemonInfo: this.evolutionData,
+          doneParsing: true
         })
-      }, 1000)
+        resolve()
+      }, 1000))
+      this.props.loaderVisibility(false)
     }
 
     render() {
-      const {pokemonInfo} = this.state
+      const {pokemonInfo, doneParsing} = this.state
       return (
-        <div className="pokemon-chain-list">
-          <div className="back-to-list">
-            <div className="back" onClick={this.props.hideEvolutionInfo}>
-              <i>&#8592;</i>
-              <h2 className="text">Back</h2>
+        <div className="pokemon-chain-list">     
+          {
+            doneParsing && <div className="back-to-list">
+              <div className="back" onClick={this.props.hideEvolutionInfo}>
+                <i>&#8592;</i>
+                <h2 className="text">Back</h2>
+              </div>
+              <h2 className="selected">Evolution chain for <b>{this.selectedPokemon}</b></h2>
+              <span>&nbsp;</span>
             </div>
-            { this.selectedPokemon && <h2 className="selected">Evolution chain for <b>{this.selectedPokemon}</b></h2>}
-            <span>&nbsp;</span>
-          </div>
+          }
           <div className="chain-list">
             {
               pokemonInfo.map((item, index) => (

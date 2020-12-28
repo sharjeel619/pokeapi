@@ -76,73 +76,6 @@ export default class Home extends Component {
     }))
   }
 
-  // calculatePokemonChain = async (chainData) => {
-  //   // Could just only iterate up to 3 levels
-  //   if (!chainData.length) return
-  //   this.evolutionLevel++
-  //   var tempList = []
-  //   chainData.forEach(async (item, index) => {
-  //     let {species} = item
-  //     let pokemonId = species.url.split("pokemon-species")[1].replace(/\//g, '')
-  //     pokemonId = Number(pokemonId)
-  //     let findData = this.state.pokemonList.find(item => item.id === pokemonId)
-  //     tempList.push({missingInfoPokeId: !findData ? pokemonId : 0, ...findData})
-  //     if (index === chainData.length - 1) {
-  //       this.evolutionData.push({pokemonData: [...tempList], level: this.evolutionLevel,  missingInfoPokeId: !findData ? pokemonId : 0})
-  //       return this.calculatePokemonChain(item.evolves_to)
-  //     }
-  //   })
-  // }
-
-  // capitalizeWord = (word) => {
-  //   return word.charAt(0).toUpperCase() + word.slice(1)
-  // }
-
-  // onPokemonCardClick = async (e, data) => {
-  //   this.setState({
-  //     showList: false,
-  //     showLoader: true
-  //   })
-  //   let speciesData = await PokemonAPI.getPokemonSpeciesByUrl(data.species.url)
-  //   let evolutionChainData = await PokemonAPI.getPokemonEvolutionChainByUrl(speciesData.evolution_chain.url)
-  //   this.selectedPokemon = `Evolution Chain for ${this.capitalizeWord(data.name)}`
-  //   const {chain} = evolutionChainData
-  //   let pokemonId = chain.species.url.split("pokemon-species")[1].replace(/\//g, '')
-  //   pokemonId = Number(pokemonId)
-  //   // wobbuffet exception, use loop to find pokemon data through api call that are not in the list.
-  //   let findData = this.state.pokemonList.find(item => item.id === pokemonId)
-  //   this.evolutionData.push({pokemonData: [{missingInfoPokeId: !findData ? pokemonId : 0, ...findData}], missingInfoPokeId: !findData ? pokemonId : 0, level: this.evolutionLevel})
-  //   this.calculatePokemonChain(chain.evolves_to)
-  //   console.log(this.evolutionData)
-  //   for (let i = 0; i < this.evolutionData.length; i++) {
-  //     if (this.evolutionData[i].missingInfoPokeId === 0) continue
-  //     await new Promise((resolve) => {
-  //       let item = this.evolutionData[i]
-  //       item.pokemonData.forEach(async (item1, index1, arr1) => {
-  //         if (item1.missingInfoPokeId === 0) return
-  //         console.log(`Calling API count: ${index1}`)
-  //         let fData = await PokemonAPI.getPokemonInfoById(item1.missingInfoPokeId)
-  //         fData.main_img = fData.sprites.other['official-artwork'].front_default || fData.sprites.other.dream_world.front_default
-  //         arr1[index1] = {...item1, ...fData}
-  //         resolve()
-  //       })
-  //     })
-  //   }
-  //   console.log(`Done`)
-  //   this.setState({
-  //     pokemonInfo: [...this.evolutionData],
-  //     showLoader: false
-  //   })
-  // }
-
-  // showListFunc = () => {
-  //   this.evolutionData = []
-  //   this.evolutionLevel = 1
-  //   this.setState({
-  //     showList: true
-  //   })
-  // }
-
   hideEvolutionInfo = () => {
     this.setState({
       showList: true,
@@ -158,8 +91,14 @@ export default class Home extends Component {
     })
   }
 
+  loaderVisibility = (val) => {
+    this.setState({
+      showLoader: val
+    })
+  }
+
   render() {
-    const {pokemonList, showList, showLoader, pokemonInfo, selectedPokemon} = this.state
+    const {pokemonList, showList, showLoader, selectedPokemon} = this.state
     return (
       <div className="home-page">
         <div className="banner">
@@ -179,7 +118,7 @@ export default class Home extends Component {
         </div>
         <div>
           { !showList && <Suspense fallback={<div></div>}>
-              <EvolutionInfo pokemonList={pokemonList} evolutionData={selectedPokemon} hideEvolutionInfo={this.hideEvolutionInfo} />
+              <EvolutionInfo pokemonList={pokemonList} evolutionData={selectedPokemon} hideEvolutionInfo={this.hideEvolutionInfo} loaderVisibility={this.loaderVisibility} />
             </Suspense>
           }
         </div>
