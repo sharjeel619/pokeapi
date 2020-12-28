@@ -30,7 +30,7 @@ import React, {
         let pokemonId = species.url.split("pokemon-species")[1].replace(/\//g, '')
         pokemonId = Number(pokemonId)
         let findData = this.props.pokemonList.find(item => item.id === pokemonId)
-        tempList.push({missingInfoPokeId: !findData ? pokemonId : 0, ...findData})
+        tempList.push({isSelected: this.selectedPokemon === species.name, missingInfoPokeId: !findData ? pokemonId : 0, ...findData})
         if (index === chainData.length - 1) {
           this.evolutionData.push({pokemonData: [...tempList], level: this.evolutionLevel,  missingInfoPokeId: !findData ? pokemonId : 0})
           // Recursive function to do deep array iteration
@@ -49,9 +49,9 @@ import React, {
       const {chain} = evolutionChainData
       let pokemonId = chain.species.url.split("pokemon-species")[1].replace(/\//g, '')
       pokemonId = Number(pokemonId)
-      //wobbuffet exception, use loop to find pokemon data through api call that are not in the list.
+
       let findData = this.props.pokemonList.find(item => item.id === pokemonId)
-      this.evolutionData.push({pokemonData: [{missingInfoPokeId: !findData ? pokemonId : 0, ...findData}], missingInfoPokeId: !findData ? pokemonId : 0, level: this.evolutionLevel})
+      this.evolutionData.push({pokemonData: [{isSelected: findData.name === name, missingInfoPokeId: !findData ? pokemonId : 0, ...findData}], missingInfoPokeId: !findData ? pokemonId : 0, level: this.evolutionLevel})
 
       this.calculatePokemonChain(chain.evolves_to)
       console.log(this.evolutionData)
@@ -82,31 +82,32 @@ import React, {
       const {pokemonInfo, doneParsing} = this.state
       return (
         <div className="pokemon-chain-list">     
-          {
-            doneParsing && <div className="back-to-list">
-              <div className="back" onClick={this.props.hideEvolutionInfo}>
-                <i>&#8592;</i>
-                <h2 className="text">Back</h2>
-              </div>
-              <h2 className="selected">Evolution chain for <b>{this.selectedPokemon}</b></h2>
-              <span>&nbsp;</span>
+          <div className="back-to-list" style={{display: doneParsing ? 'flex' : 'none'}}>
+            <div className="back" onClick={this.props.hideEvolutionInfo}>
+              <i>&#8592;</i>
+              <h2 className="text">Back</h2>
             </div>
-          }
+            <h2 className="selected">Evolution chain for <b>{this.selectedPokemon}</b></h2>
+            <span>&nbsp;</span>
+          </div>
           <div className="chain-list">
-            {
-              pokemonInfo.map((item, index) => (
-                <div className="single-pokemon-container" key={`pokemon-level-${item.level}-${index}`}>
-                  {
-                    item.pokemonData.map((item1, index1) => ((
-                      <div className="single-pokemon" key={`pokemon-${item.name}-${index1}`}>
-                        <img src={item1.main_img} alt={item1.name} />
-                        <p className="name">{item1.name}</p>
-                      </div>
-                    )))
-                  }
-                </div>
-              ))
-            }
+            <div className="pokemon-list">
+              {
+                pokemonInfo.map((item, index) => (
+                  <div className="single-pokemon-container" key={`pokemon-level-${item.level}-${index}`}>
+                    <h2 className="level">Level {item.level}</h2>
+                    {
+                      item.pokemonData.map((item1, index1) => ((
+                        <div className="single-pokemon" key={`pokemon-${item.name}-${index1}`}>
+                          <img src={item1.main_img} alt={item1.name} />
+                          <p className="name" style={{fontWeight: item1.isSelected ? 'bold' : 'normal'}}>{item1.name}</p>
+                        </div>
+                      )))
+                    }
+                  </div>
+                ))
+              }
+            </div>
           </div>
         </div>
       )

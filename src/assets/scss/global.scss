@@ -10,10 +10,7 @@ body {
   background: $bg-gray1;
   color: $textColor;
   font-family: monospace;
-  h1,h2,h3,h4,h5,h6,p,span,i {
-    font-weight: normal !important;
-  }
-  .d-none {
-    display: none;
-  }
+}
+h1,h2,h3,h4,h5,h6,p,span,i {
+  font-weight: normal;
 }
