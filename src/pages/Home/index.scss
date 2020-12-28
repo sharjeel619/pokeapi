@@ -16,9 +16,13 @@
     margin: 0 auto;
     overflow: hidden;
     max-width: 1440px;
-    h1 {
+    .title {
       text-align: center;
       margin: 32px 12px;
+      @media (max-width: $sm) {
+        font-size: 17px;
+        text-align: center;
+      }
     }
     .pokemon-list {
       display: grid;

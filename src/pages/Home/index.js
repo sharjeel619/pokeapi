@@ -23,7 +23,7 @@ export default class Home extends Component {
     this.evolutionLevel = 1
     this.totalPokemonCount = 0
     this.apiOffset = 0
-    this.apiLimit = 150
+    this.apiLimit = 50
     this.observer = null
     this.loaderRef = null
     this.observerOptions = {
@@ -105,7 +105,7 @@ export default class Home extends Component {
           <img src={Logo} lazy="true" alt="Banner Img"/>
         </div>
         <div className="pokemon-list-container" style={{display: showList ? 'block' : 'none'}}>
-          <h1> Choose a Pokemon to see its Evolution Chain </h1>
+          <h2 className="title"> Choose a Pokemon to see its Evolution Chain </h2>
           <div className="pokemon-list">
             { 
               pokemonList.map((item, index) => (
