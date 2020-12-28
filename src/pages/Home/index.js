@@ -4,8 +4,6 @@ import React, {
   lazy
 } from 'react';
 import './index.scss';
-import Logo from '../../assets/images/logo1.png';
-import Loader from '../../assets/images/loader.svg';
 import PokemonAPI from '../../services/api';
 const PokemonCard = lazy(() => import("../../components/PokemonCard"));
 const EvolutionInfo = lazy(() => import("../../components/EvolutionInfo"));
@@ -64,10 +62,11 @@ export default class Home extends Component {
     pokemonData = pokemonData.results
     let data = await Promise.all(pokemonData.map((item) => PokemonAPI.getPokemonInfoByUrl(item.url)))
     data = data.map((item) => {
-      let {stats, sprites} = item
+      let {stats, sprites, types} = item
       stats = stats.map((stat) => ({name: stat.stat.name, value: stat.base_stat}))
       let main_img = sprites.other['official-artwork'].front_default || sprites.other['dream_world'].front_default
-      return {...item, main_img, stats: stats}
+      let pokeTypes = types.map((item) => item.type.name)
+      return {...item, main_img, stats: stats, types: pokeTypes}
     })
     this.apiOffset = this.apiOffset + this.apiLimit
     this.setState((state) => ({
@@ -102,7 +101,7 @@ export default class Home extends Component {
     return (
       <div className="home-page">
         <div className="banner">
-          <img src={Logo} lazy="true" alt="Banner Img"/>
+          <img src="./images/logo1.png" lazy="true" alt="Banner Img"/>
         </div>
         <div className="pokemon-list-container" style={{display: showList ? 'block' : 'none'}}>
           <h2 className="title"> Choose a Pokemon to see its Evolution Chain </h2>
@@ -123,7 +122,7 @@ export default class Home extends Component {
           }
         </div>
         <div className="loader" ref={e => this.loaderRef = e}>
-          <img src={Loader} alt="Loader" style={{display: showLoader ? 'block' : 'none'}} />
+          <img src="./images/loader.svg" alt="Loader" style={{display: showLoader ? 'block' : 'none'}} />
         </div>
       </div>
     )

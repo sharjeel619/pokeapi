@@ -60,6 +60,7 @@
           text-align: center;
           margin-bottom: 24px;
           font-weight: bold;
+          font-style: italic;
         }
         .single-pokemon {
           text-align: center;
@@ -81,15 +82,6 @@
     }
     .icon-right {
       font-size: 50px;
-    }
-  }
-  .level-list {
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    margin: 32px 0;
-    .level-text {
-      font-size: 22px;
     }
   }
 }
