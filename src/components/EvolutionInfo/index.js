@@ -47,14 +47,18 @@ import React, {
       if (!speciesData || !speciesData.evolution_chain || !speciesData.evolution_chain.url) return
       let evolutionChainData = await PokemonAPI.getPokemonEvolutionChainByUrl(speciesData.evolution_chain.url)
       const {chain} = evolutionChainData
+      // debugger
       let pokemonId = chain.species.url.split("pokemon-species")[1].replace(/\//g, '')
       pokemonId = Number(pokemonId)
-
       let findData = this.props.pokemonList.find(item => item.id === pokemonId)
-      this.evolutionData.push({pokemonData: [{isSelected: findData.name === name, missingInfoPokeId: !findData ? pokemonId : 0, ...findData}], missingInfoPokeId: !findData ? pokemonId : 0, level: this.evolutionLevel})
+      this.evolutionData.push({
+        pokemonData: [{isSelected: findData ? findData.name === name : false, missingInfoPokeId: !findData ? pokemonId : 0, ...findData}], 
+        missingInfoPokeId: !findData ? pokemonId : 0, 
+        level: this.evolutionLevel
+      })
 
       this.calculatePokemonChain(chain.evolves_to)
-      console.log(this.evolutionData)
+      //console.log(this.evolutionData)
       for (let i = 0; i < this.evolutionData.length; i++) {
         if (this.evolutionData[i].missingInfoPokeId === 0) continue
         await new Promise((resolve) => {
