@@ -4,7 +4,7 @@ This project uses [PokeAPI](https://pokeapi.co/) to calculate a pokemons evoluti
 
 ## Installation
 
-`yarn start`
+`yarn install`
 
 ## Start
 
