@@ -103,7 +103,7 @@ import React, {
                     {
                       item.pokemonData.map((item1, index1) => ((
                         <div className="single-pokemon" key={`pokemon-${item.name}-${index1}`}>
-                          <img src={item1.main_img} alt={item1.name} />
+                          <img src={item1.main_img} alt={item1.name} lazy="true" />
                           <p className="name" style={{fontWeight: item1.isSelected ? 'bold' : 'normal'}}>{item1.name}</p>
                         </div>
                       )))
