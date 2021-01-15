@@ -52,7 +52,7 @@ import React, {
               {
                 types.map((item) => (
                   <div className={`type-icon ${item}`} title={item} key={item}>
-                    <img src={`./images/${item}.svg`} alt={item}/>
+                    <img src={`./images/${item}.svg`} alt={item} lazy="true" />
                   </div>
                 ))
               }
